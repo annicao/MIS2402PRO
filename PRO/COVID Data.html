@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+	<style> .btn{border:1px solid black; padding:5px;display:inline-block} </style>
+</head>
+<body>
+	<div class="container">
+
+		<h1>Covid Data</h1>
+		<p>1. What country has had the most Covid-19 cases? How many?</p>
+			<input type="button" class="btn btn-primary" id="btn_1" value="Check here"> <br><br>
+		<div id="textDisplayed1"></div> <br>
+		
+		<p>2. What country has had the most Covid-19 deaths? How many?</p>
+			<input type="button" class="btn btn-primary" id="btn_2" value="Check here"> <br><br>
+		<div id="textDisplayed2"></div> <br>
+		
+		<p>3. What country has had the most Covid-19 tests per million people? How many?</p>
+			<input type="button" class="btn btn-primary" id="btn_3" value="Check here">	<br><br>	
+		<div id="textDisplayed3"></div> <br>
+		
+		<p>4. What country has the newest Covid-19 cases as of today?</p> 
+			<input type="button" class="btn btn-primary" id="btn_4" value="Check here">	<br><br>
+		<div id="textDisplayed4"></div> <br>
+
+		<p>5. What country has had the most recoveries?</p>
+			<input type="button" class="btn btn-primary" id="btn_5" value="Check here"> <br><br>
+		<div id="textDisplayed5"></div> <br>
+
+	</div>
+</body>
+<script>
+////////////////////////////////////////////////////////////
+//What country has had the most Covid-19 cases? How many?
+////////////////////////////////////////////////////////////
+function mostCases(){
+$.getJSON("http://misdemo.temple.edu/covid",function(result){
+    console.log(result);
+    let cases = result["response"][0]["cases"]["total"];
+	let country = result["response"][0]["country"];
+	for(let i = 0; i < result["response"].length;i++){
+		if (cases < result["response"][i]["cases"]["total"] && result["response"][i]["population"] != null){
+			cases = result["response"][i]["cases"]["total"];
+			country = result["response"][i]["country"];
+			console.log(country);
+			console.log(cases);
+		}
+	}
+    $('#textDisplayed1').html(country + " has had the most Covid-19 cases. It has " + cases + " cases.");
+});
+}
+////////////////////////////////////////////////////////////
+//What country has had the most Covid-19 deaths? How many?
+////////////////////////////////////////////////////////////
+function mostDeaths(){
+$.getJSON("http://misdemo.temple.edu/covid",function(result){
+    console.log(result);
+    let deaths = result["response"][0]["deaths"]["total"];
+	let country = result["response"][0]["country"];
+	for(let i = 0; i < result["response"].length;i++){
+		if (deaths < result["response"][i]["deaths"]["total"] && result["response"][i]["population"] != null){
+			deaths = result["response"][i]["deaths"]["total"];
+			country = result["response"][i]["country"];
+			console.log(country);
+			console.log(deaths);
+		}
+	}
+    $('#textDisplayed2').html(country + " has had the most Covid-19 deaths. It has " + deaths + " deaths.");
+});
+}
+/////////////////////////////////////////////////////////////////////////////
+//What country has had the most Covid-19 tests per million people? How many?
+/////////////////////////////////////////////////////////////////////////////
+function mostTests(){
+$.getJSON("http://misdemo.temple.edu/covid",function(result){
+    console.log(result);
+    let tests = parseInt(result["response"][0]["tests"]["1M_pop"]);
+	let country = result["response"][0]["country"];
+	for(let i = 0; i < result["response"].length;i++){
+		if (tests < parseInt(result["response"][i]["tests"]["1M_pop"]) && result["response"][i]["tests"]["1M_pop"] != null){
+			tests = parseInt(result["response"][i]["tests"]["1M_pop"]);
+			country = result["response"][i]["country"];
+			console.log(country);
+			console.log(tests);
+		}
+	}
+    $('#textDisplayed3').html(country + " has had the most Covid-19 tests per million people. It has " + tests + " tests per million people.");
+});
+}
+////////////////////////////////////////////////////////////
+//What country has the most new Covid-19 cases as of today?
+////////////////////////////////////////////////////////////
+function newCases(){
+$.getJSON("http://misdemo.temple.edu/covid",function(result){
+    console.log(result);
+    let newCases = 0;
+	let country = result["response"][0]["country"];
+	for(let i = 0; i < result["response"].length;i++){
+		if (result["response"][i]["cases"]["new"] != null && result["response"][i]["population"] != null){
+			let newest = parseInt(result["response"][i]["cases"]["new"].substring(1));
+			if(newCases < newest){
+				newCases = newest;
+				country = result["response"][i]["country"];
+				console.log(country);
+				console.log(newCases);
+			}
+		}
+	}
+    $('#textDisplayed4').html(country + " has the newest Covid-19 cases as of today.");
+});
+}
+//////////////////////////////////////////////
+//What country has had the most recoveries?
+//////////////////////////////////////////////
+function recoveries(){
+$.getJSON("http://misdemo.temple.edu/covid",function(result){
+    console.log(result);
+    let recoveries = result["response"][0]["cases"]["recovered"];
+	let country = result["response"][0]["country"];
+	for(let i=0; i < result["response"].length;i++){
+		if (recoveries < result["response"][i]["cases"]["recovered"] && result["response"][i]["population"] != null){
+			recoveries = result["response"][i]["cases"]["recovered"];
+			country = result["response"][i]["country"];
+			console.log(country);
+			console.log(recoveries);
+		}
+	}
+    $('#textDisplayed5').html(country + " has had the most recoveries.");
+});
+}
+
+$('#btn_1').click(function(){
+	mostCases();
+})
+
+
+$('#btn_2').click(function(){
+	mostDeaths();
+})
+
+$('#btn_3').click(function(){
+	mostTests();
+})
+
+$('#btn_4').click(function(){
+	newCases();
+})
+
+$('#btn_5').click(function(){
+	recoveries();
+})
+</script>
+</html>
